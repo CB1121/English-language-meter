@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pretty Thermometer with Labels</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1bee7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #title {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .thermometer {
+      width: 70px;
+      height: 300px;
+      background: linear-gradient(to top, #eee, #fff);
+      border-radius: 40px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+      margin-right: 30px;
+      /* Make sure the thermometer is visible */
+    }
+
+    .thermo-fill {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 0%; /* Starting value of the fill */
+      background: linear-gradient(to top, red, orange, yellow, green);
+      border-radius: 40px 40px 0 0;
+      transition: height 0.4s ease, background 0.4s ease;
+    }
+
+    .bulb {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at center, red 40%, #aa0000);
+      border-radius: 50%;
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: inset -5px -5px 10px rgba(255, 255, 255, 0.5),
+                  inset 5px 5px 10px rgba(0, 0, 0, 0.2),
+                  0 5px 10px rgba(0,0,0,0.2);
+      z-index: -1;
+    }
+
+    input[type=range] {
+      width: 300px;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 10px;
+      border-radius: 5px;
+      background: #ddd;
+      outline: none;
+      margin-top: 30px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #333;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .label {
+      margin-top: 10px;
+      font-size: 1.5em;
+      color: #333;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 5px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .side-labels {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 300px;
+      margin-left: 20px;
+    }
+
+    .side-label {
+      font-size: 1.1em;
+      text-align: center;
+      color: #333;
+      padding: 5px;
+    }
+
+    .green { color: green; }
+    .yellow { color: yellow; }
+    .red { color: red; }
+  </style>
+</head>
+<body>
+
+  <!-- Customizable Title -->
+  <h1 id="title">English Proficiency Meter</h1>
+
+  <div class="container">
+    <div class="thermometer">
+      <div class="thermo-fill" id="fill"></div>
+      <div class="bulb"></div>
+    </div>
+
+    <div class="side-labels">
+      <div class="side-label green" id="labelTop">Amazing English</div>
+      <div class="side-label yellow" id="labelMiddle">Almost There</div>
+      <div class="side-label red" id="labelBottom">Not Enough English</div>
+    </div>
+  </div>
+
+  <input type="range" id="range" min="0" max="100" value="0" />
+  <div class="label" id="valueLabel">0%</div>
+
+  <script>
+    const fill = document.getElementById("fill");
+    const range = document.getElementById("range");
+    const label = document.getElementById("valueLabel");
+    const labelTop = document.getElementById("labelTop");
+    const labelMiddle = document.getElementById("labelMiddle");
+    const labelBottom = document.getElementById("labelBottom");
+
+    function getColor(value) {
+      // Interpolates red → yellow → green
+      const r = value < 50 ? 255 : Math.floor(255 - (value - 50) * 5.1);
+      const g = value > 50 ? 255 : Math.floor(value * 5.1);
+      return `rgb(${r}, ${g}, 0)`;
+    }
+
+    range.addEventListener("input", function() {
+      const value = parseInt(this.value);
+      fill.style.height = `${value}%`;
+      fill.style.background = `linear-gradient(to top, ${getColor(value)}, #ffffff)`;
+      label.textContent = `${value}%`;
+
+      // Adjust side labels visibility based on range
+      if (value <= 33) {
+        labelTop.style.color = "green";
+        labelMiddle.style.color = "gray";
+        labelBottom.style.color = "red";
+      } else if (value <= 66) {
+        labelTop.style.color = "gray";
+        labelMiddle.style.color = "yellow";
+        labelBottom.style.color = "red";
+      } else {
+        labelTop.style.color = "gray";
+        labelMiddle.style.color = "gray";
+        labelBottom.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>
